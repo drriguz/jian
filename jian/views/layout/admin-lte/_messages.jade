@@ -1,0 +1,8 @@
+mixin messages(summary, items, link, tips)
+    ul.dropdown-menu
+        li.header #{summary}
+        li
+            if block
+                block
+        li.footer
+            a(href='#{link}') tips

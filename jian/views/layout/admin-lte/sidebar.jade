@@ -1,0 +1,34 @@
+aside.main-sidebar
+    section.sidebar
+        div.user-panel
+            div.pull-left.image
+                img.img-circle(src='/images/avatar5.png', alt='User image')
+            div.pull-left.info
+                p Riguz Lee
+                a(href='#')
+                    i.fa.fa-circle.text-success
+                    |  Online
+        form.sidebar-form(action='#', method='get')
+            duv.input-group
+                input.form-control(type='text', name='q', placeholder='Search...')
+                span.input-group-btn
+                    button.btn.btn-flat(type='submit', name='search', id='search-btn'): i.fa.fa-search
+        ul.sidebar-menu
+            li.header System Menu
+            li.active
+                a(href='/')
+                    i.fa.fa-tachometer
+                    span Dashboard
+            li
+                a(href='/users')
+                    i.fa.fa-users
+                    span Users
+            li.treeview
+                a(href='#')
+                    u.fa.fa-cogs
+                    span Admin
+                    span.pull-right-container
+                        i.fa.fa-angle-left.pull-right
+                ul.treeview-menu
+                    li: a(href='#') Users
+                    li: a(href='#') Roles

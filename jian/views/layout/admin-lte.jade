@@ -1,0 +1,42 @@
+doctype html
+- var bootstrap = '3.3.7'
+- var jquery = '2.2.4'
+- var fontawesome = '4.7.0'
+- var ionicons = '2.0.1'
+- var adminlte = '2.3.11'
+- var html5shiv = '3.7.3'
+- var respond = '1.4.2'
+- var datatables = '1.10.13'
+- var jqGrid = '5.2.0'
+html
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no', name='viewport')
+        title= title
+        link(rel='stylesheet', href='/libs/bootstrap-#{bootstrap}/css/bootstrap.min.css')
+        link(rel='stylesheet', href='/libs/font-awesome-#{fontawesome}/css/font-awesome.min.css')
+        link(rel='stylesheet', href='/libs/ionicons-#{ionicons}/css/ionicons.min.css')
+        link(rel='stylesheet', href='/libs/admin-lte-#{adminlte}/css/AdminLTE.min.css')
+        link(rel='stylesheet', href='/libs/admin-lte-#{adminlte}/css/skins/skin-blue.min.css')
+        block css
+        = '\n'
+        | <!--[if lt IE 9]>
+        script(src='/libs/html5shiv-#{html5shiv}.min.js')
+        script(src='/libs/respond-#{respond}.min.js')
+        ='\n'
+        | <![endif]-->
+    body.hold-transition.skin-blue.sidebar-mini
+        div.wrapper
+            header.main-header
+                a.logo(href='#')
+                    span.logo-mini <b>J</b>i
+                    span.logo-lg <b>J</b>ian
+                include admin-lte/navbar
+            include admin-lte/sidebar
+            include admin-lte/content
+            include admin-lte/footer
+        script(src='/libs/jquery-#{jquery}.min.js')
+        script(src='/libs/bootstrap-#{bootstrap}/js/bootstrap.min.js')
+        script(src='/libs/admin-lte-#{adminlte}/js/app.min.js')
+        block js

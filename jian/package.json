@@ -6,12 +6,19 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "bluebird": "^3.5.0",
     "body-parser": "~1.17.1",
+    "cheerio": "^0.22.0",
+    "co": "^4.6.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
     "express": "~4.15.2",
     "jade": "~1.11.0",
+    "log4js": "^1.1.1",
+    "mongoose": "^4.9.7",
     "morgan": "~1.8.1",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.0",
     "serve-favicon": "~2.4.2"
   }
 }

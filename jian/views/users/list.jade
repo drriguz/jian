@@ -1,0 +1,50 @@
+extends ../layout/admin-lte
+block header
+    | System admin
+    | <small>Admin system users</small>
+block js
+    script(src='/libs/jqGrid-#{jqGrid}/js/i18n/grid.locale-en.js')
+    script(src='/libs/jqGrid-#{jqGrid}/js/jquery.jqGrid.min.js')
+    script(src='/js/grid.js')
+    script.
+        function init() {
+                let cols = [
+                    {label: 'Name', name: 'name', width: 50},
+                    {label: 'Email', name: 'email', width: 50},
+                    {label: 'Account Status', name: 'status', width: 50},
+                    {label: 'Remark ', name: 'remark', width: 50},
+                    {label: 'Last Login At', name: 'lastLoginDate', width: 50},
+                    {label: 'Created At', name: 'registeredDate', width: 50}
+                ];
+            initGrid('/users/list', cols);
+        }
+        $(function () {
+            $("#jqGrid").jqGrid({
+                url: '/users/list',
+                mtype: "GET",
+                datatype: "json",
+                page: 1,
+                colNames: ['Name', 'Email', 'Account Status', 'Last Login', 'Created At'],
+                colModel: [
+                    {name: 'name', key: true, width: 75},
+                    {name: 'email', width: 150},
+                    {name: 'status', width: 150},
+                    {name: 'lastLoginDate', width: 150},
+                    {name: 'registeredDate', width: 150}
+                ],
+                height: 250,
+                rowNum: 20,
+                pager: "#jqGridPager"
+            });
+        });
+block css
+    link(rel='stylesheet', href='/libs/jqGrid-#{jqGrid}/css/ui.jqgrid.css')
+    link(rel='stylesheet', href='/libs/jqGrid-#{jqGrid}/css/ui.jqgrid-bootstrap.css')
+    link(rel='stylesheet', href='/libs/jqGrid-#{jqGrid}/css/ui.jqgrid-bootstrap-ui.css')
+block content
+    div.row: .col-xs-12
+        div.box
+            div.box-header: h3.box-title Admin users
+            div.box-body
+                table#jqGrid
+                div#jqGridPager

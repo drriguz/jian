@@ -1,0 +1,19 @@
+doctype html
+- var jquery = '2.2.4'
+- var foundation = '6.3.1'
+
+html.no-js(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no', name='viewport')
+        title= title
+        link(rel='stylesheet', href='/libs/foundation-#{foundation}/css/foundation.min.css')
+        block css
+    body
+        block content
+        script(src='/libs/jquery-#{jquery}.min.js')
+        script(src='/libs/foundation-#{foundation}/js/vendor/what-input.js')
+        script(src='/libs/foundation-#{foundation}/js/vendor/foundation.min.js')
+        script(src='/libs/foundation-#{foundation}/js/app.js')
+        block js

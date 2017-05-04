@@ -1,0 +1,26 @@
+include _messages
+nav.navbar.navbar-static-top(role='navigation')
+    a.sidebar-toggle(href='#', data-toggle='offcanvas', role=button)
+        span.sr-only Toggle navigation
+    div.navbar-custom-menu
+        ul.nav.navbar-nav
+            li.dropdown.messages-menu
+                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                    i.fa.fa-envelope-o
+                    span.label.label-success 4
+                +messages('You have 4 messages')
+                    ul.menu
+                        li:a(href='#')
+                            div.pull-left: img.img-circle(src='/images/avatar5.png', alt='user')
+                            h4 Support Team
+                                small: i.fa.fa-clock-o 5 mins
+                            p Is there anything we can help you?
+            li.dropdown.messages-menu
+                a.dropdown-toggle(href='#', data-toggle='dropdown')
+                    i.fa.fa-bell-o
+                    span.label.label-success 4
+                +messages('You have 10 notifications')
+                    ul.menu
+                        li: a(href='#') Welcome to system
+            li.dropdown.user.user-menu
+                include account
