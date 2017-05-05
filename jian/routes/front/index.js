@@ -1,9 +1,18 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-/* GET home page. */
+const postService = require('../../services/posts');
+const co = require('co');
+const moment = require('moment');
+
 router.get('/', function (req, res, next) {
-    res.render('front/index', {title: 'Jian'});
+    co(function *() {
+        let posts = yield postService.getPosts(1, 10);
+        posts.forEach((val) => {
+            val.displayTime = moment(new Date(val.when * 1000)).format('YYYY-MM-DD HH:mm:ss');
+        });
+        return res.render('front/index', {title: 'Jian - Record my life', posts: posts});
+    });
 });
 
 module.exports = router;

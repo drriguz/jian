@@ -1,20 +1,13 @@
 extends ../layout/foundation
-
+block css
+    link(rel='stylesheet', href='/css/j.css')
 block content
     div.row
         div.medium-8.small-centered.columns
             div.panel
                 h2 我的竹简
-    div.row
-        div.medium-8.small-centered.columns
-            div.panel
-
-                hr
-                p 还是用微博吧～ 想骂谁骂谁
-    div.row
-        div.medium-8.small-centered.columns
-            div.panel
-                hr
-                p 还是用微博吧～ 想骂谁骂谁
+    include _item
+    each item in posts
+        +talk(item)
 
 
