@@ -56,6 +56,7 @@ class TecentSpider extends Spider {
         let self = this;
         $('#talkList').children('li').each((i, element) => {
             self.extract($(element)).then(post => {
+                if (!post) return;
                 self.savePost(post)
                     .then(result => {
                         logger.debug('saved:', result._id);
@@ -70,6 +71,11 @@ class TecentSpider extends Spider {
     async extract(li) {
         const self = this;
         let id = li.attr('id');
+        let exists = await this.checkPost(id);
+        if (exists) {
+            logger.debug('skip existing post:', id);
+            return null;
+        }
         logger.debug('fetching post:', id);
         let msgBox = li.find('.msgBox');
         let user = msgBox.find('.userName').attr('rel');
@@ -132,9 +138,15 @@ class TecentSpider extends Spider {
         return pictures;
     }
 
-    savePost(post) {
+    async savePost(post) {
+
         let item = new Post(post);
         return item.save();
+    }
+
+    async checkPost(id) {
+        let post = await Post.findOne({'source.id': id});
+        return !!post;
     }
 }
 
