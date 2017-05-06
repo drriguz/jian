@@ -10,4 +10,4 @@ mixin talk(post)
                         div.grid-picture-wrapper.float-left: a(href=img.src)
                             img.grid-image(src=img.thumb, style='width:100%;height:100%;')
             div.post-time-info
-                small= post.displayTime
+                small!= post.displayTime + ' <small>' + post.source.client + '</small>'

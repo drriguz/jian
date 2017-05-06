@@ -33,8 +33,9 @@ class Spider {
     }
 
     static async downloadImage(url, postTime) {
+        logger.debug('downloading image from ', url);
         let arr = url.split('/');
-        let fileName = arr[arr.length - 2] + '.jpg';
+        let fileName = arr[arr.length - 2] + '-' + arr[arr.length - 1] + '.jpg';
         let dir = dir_prefix + moment(postTime).format('YYYY/MM/DD/');
         let savePath = path.join(__dirname, '../public', dir + fileName);
         let saveDir = path.join(__dirname, '../public', dir);
@@ -82,7 +83,6 @@ class TecentSpider extends Spider {
         let localImages = [];
         for (let i = 0; i < images.length; i++) {
             let img = images[i];
-            console.log(img.attr('href'));
             let localImage = await self.extractImage(img, postTime);
             localImages.push(localImage);
         }
@@ -118,7 +118,7 @@ class TecentSpider extends Spider {
         let $ = this.$;
         let pictureGroup = mediaWrap.find('.tl_imgGroup');
         if (pictureGroup.length > 0) {
-            console.log('picture group.');
+            logger.debug('find picture group.');
             pictureGroup.find('.tl_imgGroup_item').each((i, element) => {
                 let a = $(element).find('a');
                 pictures.push(a);
@@ -127,7 +127,7 @@ class TecentSpider extends Spider {
         else {
             let a = mediaWrap.find('.picBox').find('a');
             pictures.push(a);
-            console.log('picture.');
+            logger.debug('find picture.');
         }
         return pictures;
     }
