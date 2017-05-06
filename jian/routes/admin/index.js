@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const importService = require('../../services/tecent');
+const importService = require('../../services/spider');
 
 router.get('/', function (req, res, next) {
     res.render('admin/index', {title: 'Jian'});
@@ -17,12 +17,7 @@ router.get('/import', (req, res) => {
 
 router.post('/import.action', (req, res) => {
     let body = req.body;
-    importService.importFromTecent(body.url)
-        .then(result => {
-            return res.send('Importing handled');
-        })
-        .catch(err => {
-            return res.status(500).send(err);
-        });
+    importService.importFromTecent(body.url);
+    return res.send('Importing handled');
 });
 module.exports = router;

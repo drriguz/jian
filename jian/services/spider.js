@@ -7,6 +7,9 @@ const moment = require('moment');
 const path = require('path');
 const Promise = require('bluebird');
 
+const Post = require('../models/post');
+const dir_prefix = 'postpic/';
+
 class Spider {
     constructor($, from) {
         this.$ = $;
@@ -23,7 +26,7 @@ class Spider {
         return await request(options);
     }
 
-    static download (uri, filename, callback){
+    static download(uri, filename, callback) {
         request.head(uri, (err, res, body) => {
             request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
         });
@@ -32,9 +35,9 @@ class Spider {
     static async downloadImage(url, postTime) {
         let arr = url.split('/');
         let fileName = arr[arr.length - 2] + '.jpg';
-        let dir = moment(postTime).format('YYYY/MM/DD/');
-        let savePath = path.join(__dirname, '../public/postpic', dir + fileName);
-        let saveDir = path.join(__dirname, '../public/postpic', dir);
+        let dir = dir_prefix + moment(postTime).format('YYYY/MM/DD/');
+        let savePath = path.join(__dirname, '../public', dir + fileName);
+        let saveDir = path.join(__dirname, '../public', dir);
         fsExtra.ensureDirSync(saveDir);
         const downloadPromise = Promise.promisify(this.download);
         await downloadPromise(url, savePath);
@@ -51,8 +54,14 @@ class TecentSpider extends Spider {
         let $ = this.$;
         let self = this;
         $('#talkList').children('li').each((i, element) => {
-            self.extract($(element)).then(post=>{
-                console.log(post);
+            self.extract($(element)).then(post => {
+                self.savePost(post)
+                    .then(result => {
+                        logger.debug('saved:', result._id);
+                    })
+                    .catch(err => {
+                        logger.error(err);
+                    });
             });
         });
     }
@@ -71,7 +80,7 @@ class TecentSpider extends Spider {
         let client = pubInfo.find('.f').text();
         let images = this.findImages(mediaWrap);
         let localImages = [];
-        for(let i = 0; i < images.length; i++){
+        for (let i = 0; i < images.length; i++) {
             let img = images[i];
             console.log(img.attr('href'));
             let localImage = await self.extractImage(img, postTime);
@@ -79,7 +88,7 @@ class TecentSpider extends Spider {
         }
         let post = {
             content: content,
-            when: postTime,
+            when: timestamp,
             source: {
                 client: client,
                 user: user,
@@ -122,11 +131,18 @@ class TecentSpider extends Spider {
         }
         return pictures;
     }
+
+    savePost(post) {
+        let item = new Post(post);
+        return item.save();
+    }
 }
 
-
-const solee_url = 'http://t.qq.com/solever?gall=1';
-Spider.fetch(solee_url).then($ => {
-    let spider = new TecentSpider($);
-    spider.extractAll();
-});
+exports = module.exports = {
+    importFromTecent: (url) => {
+        Spider.fetch(url).then($ => {
+            let spider = new TecentSpider($);
+            spider.extractAll();
+        });
+    }
+};
