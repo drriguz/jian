@@ -7,7 +7,7 @@ const moment = require('moment');
 
 router.get('/', function (req, res, next) {
     co(function *() {
-        let posts = yield postService.getPosts(1, 10);
+        let posts = yield postService.getPosts(1, 20);
         posts.forEach((val) => {
             val.displayTime = moment(new Date(val.when * 1000)).format('YYYY-MM-DD HH:mm:ss');
         });

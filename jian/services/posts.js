@@ -8,7 +8,7 @@ function getPosts(page, rows) {
             .skip((page - 1) * rows)
             .limit(rows);
     }
-    return query.lean().exec();
+    return query.sort('-when').lean().exec();
 }
 
 module.exports = {

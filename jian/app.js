@@ -6,7 +6,6 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
 
-
 const app = express();
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 const db = require('./db');
@@ -62,5 +61,14 @@ app.use(function (err, req, res, next) {
     // render the error page
     res.status(err.status || 500);
     res.render('error');
+});
+
+const log4js = require('log4js');
+log4js.configure({
+    appenders: [
+        {type: 'console'},
+        {type: 'file', filename: 'logs.log'}
+    ],
+    replaceConsole: true,
 });
 module.exports = app;

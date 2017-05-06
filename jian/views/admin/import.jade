@@ -1,0 +1,10 @@
+extends ../layout/admin-lte
+
+block content
+    div.row: div.col-md-10
+        form.form-inline(role='form', method='post', action='/admin/import.action')
+            div.form-group
+                label(for='url') URL
+                input.form-control(name='url', type='text', value='http://t.qq.com/solever?gall=1')
+                button.btn.btn-default(type='submit') Submit
+
