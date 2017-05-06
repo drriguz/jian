@@ -9,5 +9,9 @@ block content
     include _item
     each item in posts
         +talk(item)
-
+    div.row: div.medium-8: ul.pagination(role='navigation')
+        li.pagination-previous.disabled: a(href='#')
+            | Previous
+        li.current: a(href='#')= 1
+        li.pagination-next: a(href='?page=2&rows=20')
 

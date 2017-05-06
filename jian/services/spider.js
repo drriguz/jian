@@ -148,13 +148,29 @@ class TecentSpider extends Spider {
         let post = await Post.findOne({'source.id': id});
         return !!post;
     }
-}
 
-exports = module.exports = {
-    importFromTecent: (url) => {
-        Spider.fetch(url).then($ => {
-            let spider = new TecentSpider($);
-            spider.extractAll();
-        });
+    getNextPage(base) {
+        let $ = this.$;
+        let pageBtn = $('.pageBtn');
+        let paramIndex = base.indexOf('?');
+        if (paramIndex) base = base.substr(0, paramIndex);
+        if (pageBtn.length > 0) {
+            return base + pageBtn.attr('href');
+        }
+        return null;
     }
+}
+function importFromTecent(url) {
+    Spider.fetch(url).then($ => {
+        let spider = new TecentSpider($);
+        let next = spider.getNextPage(url);
+        console.log('next:', next);
+        if (next) {
+            importFromTecent(next);
+        }
+        spider.extractAll();
+    });
+}
+exports = module.exports = {
+    importFromTecent: importFromTecent,
 };
