@@ -56,7 +56,6 @@ class TxtMessage extends Message {
         let result = '';
         let flag = this.content[start];
         if (flag < 32) {
-            //console.error('Unknown char:', flag, length, this.content.toString('hex'));
             result = this.readSpecialTxt(start);
         }
         else {
