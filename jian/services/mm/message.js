@@ -1,10 +1,12 @@
 class Message {
-    constructor(head, when, buffer, sourceType, localFlag) {
+    constructor(type, head, when, buffer, sourceType, localFlag) {
+        this.type = type;
         this.head = head;
         this.when = when;
         this.buffer = buffer;
         this.sourceType = sourceType;
         this.localFlag = localFlag;
+        this.lastIndex = 0;
     }
 
     parse() {
@@ -25,7 +27,10 @@ class Message {
             console.error('Failed to find content');
             return;
         }
-        this.content = Message.decodeUtf8(this.readFlagTo(content.position, [0x32, 0x1f]));
+        let contentHex = this.readFlagTo(content.position, [0x32, 0x1f]);
+        let contentBuffer = new Buffer(contentHex, 'hex');
+        this.content = Message.decodeUtf8(contentHex);
+        this.lastIndex = content.position + contentBuffer.length;
     }
 
     findFlag(start, flag) {
@@ -37,6 +42,24 @@ class Message {
                     length: this.buffer[i + 1],
                     position: i + 2,
                 };
+        }
+        return null;
+    }
+
+    findFlags(start, flagArr) {
+        for (let i = start; i < this.buffer.length; i++) {
+            let ch = this.buffer[i];
+            if (ch === flagArr[0]) {
+                let found = true;
+                for (let j = 0; j < flagArr.length; j++) {
+                    if (i + j >= this.buffer.length || this.buffer[i + j] !== flagArr[j]) {
+                        found = false;
+                        break;
+                    }
+                }
+                if(found)
+                    return i + flagArr.length;
+            }
         }
         return null;
     }
