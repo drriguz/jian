@@ -5,11 +5,13 @@ const Message = require('./mm/message');
 const TxtMessage = require('./mm/txtMsg');
 
 db.serialize(() => {
-    db.each('select * from SnsInfo where type=? order by createTime desc', '2', (err, row) => {
+    db.each('select * from SnsInfo order by createTime desc limit 5', (err, row) => {
+        // if (row.type !== 1)
+        //     return;
         let item = new TxtMessage(row.head, row.createTime, row.content, row.sourceType, row.localFlag);
         try {
             let msg = item.parse();
-            console.log(msg);
+            console.log(row.stringSeq, msg);
         }
         catch (err) {
             console.error('Failed to parse:', row.stringSeq, row.content.toString('hex'));
