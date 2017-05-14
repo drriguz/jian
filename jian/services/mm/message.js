@@ -27,10 +27,24 @@ class Message {
             console.error('Failed to find content');
             return;
         }
-        let contentHex = this.readFlagTo(content.position, [0x32, 0x1f]);
-        let contentBuffer = new Buffer(contentHex, 'hex');
-        this.content = Message.decodeUtf8(contentHex);
-        this.lastIndex = content.position + contentBuffer.length;
+        let flag = this.buffer[content.position];
+        let contentHex = '';
+        if (flag < 32) {
+            console.log('Unknown mask found:', flag);
+            this.contentMask = flag;
+            contentHex = this.readFlagTo(content.position + 1, [0x32, 0x1f]);
+        }
+        else {
+            contentHex = this.readFlag(content.position, content.length);
+        }
+        if (contentHex) {
+            let contentBuffer = new Buffer(contentHex, 'hex');
+            this.content = Message.decodeUtf8(contentHex);
+            this.lastIndex = content.position + contentBuffer.length;
+        }
+        else {
+            this.lastIndex = content.position;
+        }
     }
 
     findFlag(start, flag) {
@@ -57,7 +71,7 @@ class Message {
                         break;
                     }
                 }
-                if(found)
+                if (found)
                     return i + flagArr.length;
             }
         }
