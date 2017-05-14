@@ -4,21 +4,33 @@
     margin-right: 5px;
     margin-bottom: 5px;
 }
-.media{
+
+.media {
     margin-top: 15px;
-    width:300px;
+    width: 300px;
 }
+
 .grid-image {
     display: inline;
 }
 
 .post-time-info {
     clear: both;
-    color: #759AAD;
+    color: #006a92;
 }
 
 .post-content {
     font-size: 14px;
     text-shadow: 1px 1px 1px #aaa5a5cc;
     line-height: 1.2;
+}
+
+.post-wrapper {
+    border-bottom: 1px dotted #D8D8D8
+}
+
+.post-header{
+    margin-top:10px;
+    margin-bottom: 5px;
+    color: #006a92;
 }

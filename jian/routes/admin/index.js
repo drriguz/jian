@@ -17,7 +17,7 @@ router.get('/import', (req, res) => {
 
 router.post('/import.action', (req, res) => {
     let body = req.body;
-    importService.importFromTecent(body.url);
+    importService.importFromTecent(body.url, 1, parseInt(body.min) || 1, parseInt(body.max) || 100);
     return res.send('Importing handled');
 });
 module.exports = router;

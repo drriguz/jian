@@ -1,8 +1,9 @@
 mixin talk(post)
 
     div.row
-        div.medium-8.small-centered.columns
-            hr
+        div.medium-8.small-centered.columns.post-wrapper
+            div.post-header
+                strong 红尘の人
             div.panel.post-content!= post.content
             if post.images
                 div.media

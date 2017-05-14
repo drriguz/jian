@@ -33,16 +33,25 @@ class Spider {
     }
 
     static async downloadImage(url, postTime) {
-        logger.debug('downloading image from ', url);
+        if (!url) {
+            logger.error('Unknown url:', postTime);
+            return null;
+        }
         let arr = url.split('/');
         let fileName = arr[arr.length - 2] + '-' + arr[arr.length - 1] + '.jpg';
         let dir = dir_prefix + moment(postTime).format('YYYY/MM/DD/');
         let savePath = path.join(__dirname, '../public', dir + fileName);
         let saveDir = path.join(__dirname, '../public', dir);
         fsExtra.ensureDirSync(saveDir);
+        let relPath = dir + fileName;
+        if (fs.existsSync(savePath)) {
+            logger.debug('Skip download:', fileName);
+            return relPath;
+        }
+        logger.debug('downloading image from ', url);
         const downloadPromise = Promise.promisify(this.download);
         await downloadPromise(url, savePath);
-        return dir + fileName;
+        return relPath;
     }
 }
 
@@ -92,6 +101,7 @@ class TecentSpider extends Spider {
             let localImage = await self.extractImage(img, postTime);
             localImages.push(localImage);
         }
+        let video = this.findVideo(mediaWrap);
         let post = {
             content: content,
             when: timestamp,
@@ -103,6 +113,7 @@ class TecentSpider extends Spider {
                 from: this.from,
             },
             images: localImages,
+            video: video,
         };
         return post;
     }
@@ -132,14 +143,24 @@ class TecentSpider extends Spider {
         }
         else {
             let a = mediaWrap.find('.picBox').find('a');
-            pictures.push(a);
-            logger.debug('find picture.');
+            if (a.length > 0) {
+                pictures.push(a);
+                logger.debug('find picture.');
+            }
         }
         return pictures;
     }
 
-    async savePost(post) {
+    findVideo(mediaWrap) {
+        if (mediaWrap.length <= 0) return [];
+        let a = mediaWrap.find('.videoBox').find('.vWrap').find('a');
+        if (a.length <= 0)
+            return null;
+        logger.debug('=>find video.', a.attr('href'));
+        return a.attr('href');
+    }
 
+    async savePost(post) {
         let item = new Post(post);
         return item.save();
     }
@@ -149,26 +170,45 @@ class TecentSpider extends Spider {
         return !!post;
     }
 
-    getNextPage(base) {
+    getNextPage(base, page) {
         let $ = this.$;
-        let pageBtn = $('.pageBtn');
+        let pageBtn = $('#pageNav').children('a');
         let paramIndex = base.indexOf('?');
         if (paramIndex) base = base.substr(0, paramIndex);
         if (pageBtn.length > 0) {
-            return base + pageBtn.attr('href');
+            for (let i = 0; i < pageBtn.length; i++) {
+                let theBtn = $(pageBtn.get(i));
+
+                if (parseInt(theBtn.text()) === page) {
+                    return base + theBtn.attr('href');
+                }
+            }
         }
         return null;
     }
 }
-function importFromTecent(url) {
+function importFromTecent(url, page, min, max) {
+    if (!page) page = 1;
+    logger.debug('=>page:', page, url);
+    if (page > max) {
+        logger.debug('stoped');
+        return;
+    }
     Spider.fetch(url).then($ => {
         let spider = new TecentSpider($);
-        let next = spider.getNextPage(url);
-        console.log('next:', next);
+        let next = spider.getNextPage(url, page + 1);
         if (next) {
-            importFromTecent(next);
+            importFromTecent(next, page + 1, min, max);
         }
-        spider.extractAll();
+        else {
+            logger.debug('< No more pages.');
+        }
+        if (page < min || page > max) {
+            logger.debug('=> skip fetching', page);
+        } else {
+            logger.debug('====> fetching:', page);
+            spider.extractAll();
+        }
     });
 }
 exports = module.exports = {

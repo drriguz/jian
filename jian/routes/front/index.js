@@ -7,7 +7,7 @@ const moment = require('moment');
 const logger = require('log4js').getLogger();
 
 router.get('/', async function (req, res, next) {
-    let [page, rows] = [parseInt(req.query.page) || 1, parseInt(req.query.rows) || 20];
+    let [page, rows] = [parseInt(req.query.page) || 1, parseInt(req.query.rows) || 15];
     try {
         let posts = await postService.paginate(page, rows, req.query.search, req.query.status, req.query.tag);
         posts.records.forEach((val) => {

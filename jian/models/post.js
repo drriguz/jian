@@ -17,6 +17,7 @@ const postSchema = new Schema({
         url: String,
         user: String,
     },
+    video: String,
 });
 
 module.exports = mongoose.model('Post', postSchema);
