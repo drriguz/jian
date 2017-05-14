@@ -5,13 +5,15 @@
     margin-bottom: 5px;
 }
 
-.media {
+.post-media {
     margin-top: 15px;
     width: 300px;
 }
 
 .grid-image {
     display: inline;
+    width: 100%;
+    height: 100%;
 }
 
 .post-time-info {
@@ -29,8 +31,13 @@
     border-bottom: 1px dotted #D8D8D8
 }
 
-.post-header{
-    margin-top:10px;
+.post-header {
+    margin-top: 10px;
     margin-bottom: 5px;
     color: #006a92;
+}
+
+video {
+    width: 150px;
+    height: auto;
 }
