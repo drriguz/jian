@@ -9,7 +9,7 @@ const POST_TYPES = {
     VIDEO_SHARE: 5,
     VIDEO_POST: 15,
 };
-class ImageMessage extends Message {
+class SnsMessage extends Message {
     parseImages() {
         this.images = [];
         for (let l = 0; l < 9; l++) {
@@ -63,7 +63,7 @@ class ImageMessage extends Message {
         if (this.type === POST_TYPES.IMAGE_POST) {
             this.parseImages();
         }
-        if (this.type === POST_TYPES.LINK_SHARE) {
+        if (this.type === POST_TYPES.LINK_SHARE || this.type === POST_TYPES.MUSIC_SHARE || this.type === POST_TYPES.VIDEO_SHARE) {
             this.parseLinks();
         }
         return {
@@ -83,4 +83,4 @@ class ImageMessage extends Message {
     }
 }
 
-exports = module.exports = ImageMessage;
+exports = module.exports = SnsMessage;
