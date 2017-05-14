@@ -5,7 +5,7 @@ const Message = require('./mm/message');
 const SnsMessage = require('./mm/snsMessage');
 
 db.serialize(() => {
-    db.each('select * from SnsInfo where type=? order by createTime desc', '5', (err, row) => {
+    db.each('select * from SnsInfo where type=? order by createTime desc', '15', (err, row) => {
         // if (row.type !== 1)
         //     return;
         let item = new SnsMessage(row.type, row.head, row.createTime, row.content, row.sourceType, row.localFlag);

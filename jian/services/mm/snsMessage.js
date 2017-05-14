@@ -58,13 +58,39 @@ class SnsMessage extends Message {
         }
     }
 
+    parseVideo() {
+        let urlPosotion = this.findFlags(this.lastIndex, [0x89, 0x02]);
+        if (!urlPosotion) {
+            urlPosotion = this.findFlags(this.lastIndex, [0x87, 0x02]);
+        }
+        if (!urlPosotion) {
+            urlPosotion = this.findFlags(this.lastIndex, [0x85, 0x02]);
+        }
+        if (!urlPosotion) {
+            urlPosotion = this.findFlags(this.lastIndex, [0x83, 0x02]);
+        }
+        if (!urlPosotion) {
+            console.error('Failed to find video url!');
+            return;
+        }
+        let videoUrl = this.readFlagTo(urlPosotion, [0x01, 0x40]);
+        videoUrl = Message.decodeUtf8(videoUrl);
+        this.video = videoUrl;
+        this.lastIndex = urlPosotion;
+    }
+
     parse() {
         super.parse();
         if (this.type === POST_TYPES.IMAGE_POST) {
             this.parseImages();
         }
-        if (this.type === POST_TYPES.LINK_SHARE || this.type === POST_TYPES.MUSIC_SHARE || this.type === POST_TYPES.VIDEO_SHARE) {
+        if (this.type === POST_TYPES.LINK_SHARE ||
+            this.type === POST_TYPES.MUSIC_SHARE ||
+            this.type === POST_TYPES.VIDEO_SHARE) {
             this.parseLinks();
+        }
+        if(this.type === POST_TYPES.VIDEO_POST){
+            this.parseVideo();
         }
         return {
             displayTime: moment(this.when * 1000).format('YYYY/MM/DD/'),
@@ -75,10 +101,12 @@ class SnsMessage extends Message {
             mask: this.contentMask || '',
             images: this.images || [],
             link: this.link || '',
+            video: this.video || '',
             linkMask: this.linkMask || '',
             type: this.type,
             flag: '',
             raw: this.buffer.toString('hex'),
+            abstract: this.buffer.toString(),
         };
     }
 }
