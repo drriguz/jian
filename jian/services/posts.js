@@ -9,14 +9,17 @@ class PostService {
         if (tag) query.tag = {$elemMatch: {$eq: tag}};
         let total = await Post.find(query).count();
         let list = await Post.find(query).sort('-when').skip((page - 1) * rows).limit(rows);
-        let pageCount = total / rows;
-        if (total % rows !== 0) pageCount += 1;
-        return {
+        let pageCount = Math.ceil(total / rows);
+        let pagination = {
             page: page,
             pageCount: pageCount,
             pageSize: rows,
             total: total,
+        };
+        console.log(pagination);
+        return {
             records: list,
+            pagination: pagination,
         };
     }
 }

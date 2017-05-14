@@ -13,7 +13,7 @@ router.get('/', async function (req, res, next) {
         posts.records.forEach((val) => {
             val.displayTime = moment(new Date(val.when * 1000)).format('YYYY-MM-DD HH:mm:ss');
         });
-        return res.render('front/index', {title: 'Jian - Record my life', posts: posts});
+        return res.render('front/index', {title: 'Jian - Record my life', posts: posts.records, pagination: posts.pagination});
     } catch (err) {
         logger.error(err);
         return res.status(500).send(err);

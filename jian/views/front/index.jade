@@ -5,13 +5,11 @@ block content
     div.row
         div.medium-8.small-centered.columns
             div.panel
-                h2= '简 ' + posts.total
+                h2= '简 ' + pagination.total
     include _item
-    each item in posts.records
+    each item in posts
         +talk(item)
-    div.row: div.medium-8.small-centered.columns: ul.pagination(role='navigation')
-        li.pagination-previous.disabled: a(href='#')
-            | Previous
-        li: a(href='#')= 2
-        li.pagination-next: a(href='?page=2&rows=20')
+    div.row: div.medium-8.small-centered.columns
+        include _pagination
+        +pagination(pagination, '/', 3)
 
