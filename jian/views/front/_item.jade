@@ -5,8 +5,11 @@ mixin talk(post)
             div.post-header
                 strong 红尘の人
             div.panel.post-content!= post.content
+            if post.video
+                div.post-video
+                    a(href=post.video) <small>[视频]</small>
             if post.images
-                div.media
+                div.post-media
                     each img in post.images
                         div.grid-picture-wrapper.float-left
                             a(href=img.src, data-lity='')

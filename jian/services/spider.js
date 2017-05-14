@@ -88,7 +88,15 @@ class TecentSpider extends Spider {
         logger.debug('fetching post:', id);
         let msgBox = li.find('.msgBox');
         let user = msgBox.find('.userName').attr('rel');
-        let content = msgBox.find('.msgCnt').html();
+
+        let msgCnt = msgBox.find('.msgCnt');
+        let contentIcons = msgCnt.find('img');
+        for(let i = 0; i < contentIcons.length; i++){
+            let icon = contentIcons.get(i);
+            let $ = this.$;
+            $(icon).attr('src', $(icon).attr('crs'));
+        }
+        let content = msgCnt.html();
         let mediaWrap = msgBox.find('.multiMedia').find('.mediaWrap');
         let pubInfo = msgBox.find('.pubInfo').find('span');
         let timestamp = pubInfo.find('.time').attr('rel');
