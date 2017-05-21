@@ -12,11 +12,11 @@ mixin talk(post)
                 else
                     div.post-video
                         a(href=post.video, style='color:blue') Video
-            if post.images
+            if post.medias
                 div.post-media
-                    each img in post.images
+                    each media in post.medias
                         div.grid-picture-wrapper.float-left
-                            a(href=img.src, data-lity='')
-                                img.grid-image(src=img.thumb)
+                            a(href=media.src, data-lity='')
+                                img.grid-image(src=media.thumb)
             div.post-time-info
                 small!= post.displayTime + ' <small>' + post.source.client + '</small>'

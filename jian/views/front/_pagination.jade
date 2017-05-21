@@ -1,4 +1,4 @@
-mixin pagination(pagination, baseUrl, around)
+mixin pagination(pagination, baseUrl, around, extArgs)
     - var pageSize = pagination.pageSize
     - var pageCount = pagination.pageCount
     - var current = pagination.page
@@ -7,30 +7,30 @@ mixin pagination(pagination, baseUrl, around)
     - if (minPage < 1) minPage = 1;
     - if (maxPage > pageCount) maxPage = pageCount;
 
-
+    - baseUrl = baseUrl + "?" + extArgs;
 
     ul.pagination(role='navigation', aria-label='Pagination')
         li.pagination-previous(class=current > 1 ? '' : 'disabled')
             if current > 1
-                a(href='#{baseUrl}?page=#{current - 1}&rows=#{pageSize}', aria-label='Previous page') Previous
+                a(href='#{baseUrl}&page=#{current - 1}&rows=#{pageSize}', aria-label='Previous page') Previous
             else
                 span.show-for-sr page
                 | Previous
         if minPage > 1
-            li: a(href='#{baseUrl}?page=1&rows=#{pageSize}', aria-label='First page') 1
+            li: a(href='#{baseUrl}&page=1&rows=#{pageSize}', aria-label='First page') 1
         if minPage > 2
             li.ellipsis
         - var i = minPage
         while i <= maxPage
             - var link = i ++
             - var active = link == current ? 'current' : ''
-            li: a(href='#{baseUrl}?page=#{link}&rows=#{pageSize}', aria-label='Page #{link}', class=active) #{link}
+            li: a(href='#{baseUrl}&page=#{link}&rows=#{pageSize}', aria-label='Page #{link}', class=active) #{link}
         if maxPage < pageCount - 1
             li.ellipsis
         if maxPage < pageCount
-            li: a(href='#{baseUrl}?page=#{pageCount}&rows=#{pageSize}', aria-label='Last page') #{pageCount}
+            li: a(href='#{baseUrl}&page=#{pageCount}&rows=#{pageSize}', aria-label='Last page') #{pageCount}
         li.pagination-next(class=current < pageCount ? '' : 'disabled')
             if current < pageCount
-                a(href='#{baseUrl}?page=#{current + 1}&rows=#{pageSize}', aria-label='Next page') Next
+                a(href='#{baseUrl}&page=#{current + 1}&rows=#{pageSize}', aria-label='Next page') Next
             else
                 | Next

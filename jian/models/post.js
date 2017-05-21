@@ -4,10 +4,16 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema({
     content: String,
     when: Number,
-    images: [
+    medias: [
         {
             src: String,
+            width: Number,
+            height: Number,
+            size: Number,
             thumb: String,
+            mimeType: String,
+            srcRefer: String,
+            thumbRefer: String,
         }
     ],
     source: {

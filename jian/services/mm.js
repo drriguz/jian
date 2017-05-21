@@ -4,8 +4,9 @@ const SnsMessage = require('./mm/snsMessage');
 const Post = require('../models/post');
 const request = require('request-promise');
 const cheerio = require('cheerio');
-const parseString = require('xml2js').parseString;
+const _ = require('lodash');
 const xmldoc = require('xmldoc');
+
 
 const Spider = require('./spider').Spider;
 
@@ -33,7 +34,7 @@ class MmService {
                 }
                 this.parseContent(row)
                     .then(post => {
-                        console.log(post);
+                        //console.log(post);
                     })
                     .catch(err => {
                         console.error(err);
@@ -46,7 +47,25 @@ class MmService {
 
     async parseContent(row) {
         let doc = new xmldoc.XmlDocument(row.contentXml);
-        console.log(doc.valueWithPath("createTime"));
+        console.log(doc.toString());
+        let contentObject = doc.descendantWithPath("ContentObject.mediaList");
+        let images = [];
+        if (contentObject) {
+            contentObject.eachChild(media => {
+                //console.log('media:', media.toString());
+                let image = {
+                    src: media.valueWithPath("url"),
+                    thumb: media.valueWithPath("thumb"),
+                    width: media.valueWithPath("size@width"),
+                    height: media.valueWithPath("size@height"),
+                    size: media.valueWithPath("size@totalSize"),
+                    mimeType: 'image/jpeg',
+                    srcRefer: media.valueWithPath("url"),
+                    thumbRefer: media.valueWithPath("thumb"),
+                };
+                images.push(image);
+            });
+        }
         let post = {
             content: doc.valueWithPath("contentDesc"),
             when: doc.valueWithPath("createTime"),
@@ -58,35 +77,36 @@ class MmService {
                 from: 'Wechat',
             },
             msgType: doc.valueWithPath("ContentObject.contentStyle"),
-            images: [],
+            medias: images,
             video: null,
         };
-        let saved = await this.savePost(post);
-        return saved;
+        console.log(post);
+        post = await this.savePost(post);
+        return post;
     }
 
     async savePost(post) {
         let localImages = [];
         let postTime = new Date(post.when * 1000);
-        if (post.images) {
-            for (let i = 0; i < post.images.length; i++) {
-                let img = post.images[i];
-                let localImage = await this.extractImage(img.src, img.thumb, postTime);
+        if (post.medias) {
+            for (let i = 0; i < post.medias.length; i++) {
+                let img = post.medias[i];
+                let localImage = await this.extractImage(img, postTime);
                 localImages.push(localImage);
             }
         }
-        post.images = localImages;
+        post.medias = localImages;
         let item = new Post(post);
         return item.save();
     }
 
-    async extractImage(src, thumb, postTime) {
-        let localSrc = await Spider.downloadImage(src, postTime);
-        let localThumb = await Spider.downloadImage(thumb, postTime);
-        return {
+    async extractImage(img, postTime) {
+        let localSrc = await Spider.downloadImage(img.src, postTime);
+        let localThumb = await Spider.downloadImage(img.thumb, postTime);
+        return _.merge(img, {
             thumb: localThumb,
             src: localSrc,
-        };
+        });
     }
 }
 

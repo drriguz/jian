@@ -2,11 +2,13 @@ const Post = require('../models/post');
 const logger = require('log4js').getLogger('users');
 
 class PostService {
-    async paginate(page, rows, search, status, tag) {
+    async paginate(page, rows, search, type, tag) {
         let query = {};
         if (search) query.content = new RegExp(search, 'i');
-        if (status) query.status = status;
+        if (type) query.msgType = type;
+
         if (tag) query.tag = {$elemMatch: {$eq: tag}};
+        console.log(query);
         let total = await Post.find(query).count();
         let list = await Post.find(query).sort('-when').skip((page - 1) * rows).limit(rows);
         let pageCount = Math.ceil(total / rows);
