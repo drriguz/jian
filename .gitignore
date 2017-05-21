@@ -4,5 +4,6 @@ node_modules
 *.out
 *bak*.tar.gz
 *.bak
+*.tar.gz
 .DS_Store
 jian/public/postpic

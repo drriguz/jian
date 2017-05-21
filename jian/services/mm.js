@@ -1,12 +1,11 @@
 const sqlite = require("sqlite3").verbose();
 const logger = require('log4js').getLogger();
-const SnsMessage = require('./mm/snsMessage');
 const Post = require('../models/post');
 const request = require('request-promise');
 const cheerio = require('cheerio');
 const _ = require('lodash');
 const xmldoc = require('xmldoc');
-
+const md5 = require('md5');
 
 const Spider = require('./spider').Spider;
 
@@ -52,17 +51,22 @@ class MmService {
             return 'audio/mpeg';
         if (msgType == 5)
             return 'video/mpeg';
+        if (msgType == 15)
+            return 'video/wechat';
+        if (msgType == 3)
+            return 'text/html';
         return 'unknown';
     }
 
     async parseContent(row) {
         let doc = new xmldoc.XmlDocument(row.contentXml);
         console.log(doc.toString());
-        let contentObject = doc.descendantWithPath("ContentObject.mediaList");
+        let mediaList = doc.descendantWithPath("ContentObject.mediaList");
+        let contentObject = doc.descendantWithPath('ContentObject');
         let type = doc.valueWithPath("ContentObject.contentStyle");
         let images = [];
-        if (contentObject) {
-            contentObject.eachChild(media => {
+        if (mediaList) {
+            mediaList.eachChild(media => {
                 let image = {
                     src: media.valueWithPath("url"),
                     thumb: media.valueWithPath("thumb"),
@@ -72,9 +76,11 @@ class MmService {
                     mimeType: MmService.mapMimeType(type),
                     srcRefer: media.valueWithPath("url"),
                     thumbRefer: media.valueWithPath("thumb"),
-                    title: media.valueWithPath("title") || '',
+                    title: media.valueWithPath("title") || contentObject.valueWithPath('title') || '',
                     description: media.valueWithPath("description") || '',
                 };
+                if (type == 3)
+                    image.src = contentObject.valueWithPath('contentUrl');
                 images.push(image);
             });
         }
@@ -117,7 +123,14 @@ class MmService {
             let localSrc = await Spider.downloadImage(media.src, postTime);
             media = _.merge(media, {src: localSrc});
         }
-        let localThumb = await Spider.downloadImage(media.thumb, postTime);
+        let thumbName = undefined;
+        if (media.mimeType === 'video/wechat') {
+            let saveFile = md5(media.src) + '.mp4';
+            let localSrc = await Spider.downloadImage(media.src, postTime, saveFile);
+            media = _.merge(media, {src: localSrc});
+            thumbName = md5(media.thumb) + '.jpg';
+        }
+        let localThumb = await Spider.downloadImage(media.thumb, postTime, thumbName);
         return _.merge(media, {
             thumb: localThumb,
         });

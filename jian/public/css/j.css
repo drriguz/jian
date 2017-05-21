@@ -1,25 +1,36 @@
-.grid-picture-wrapper{
+.grid-picture-wrapper {
     width: 85px;
     height: 85px;
     margin-right: 5px;
     margin-bottom: 5px;
 }
-.grid-audio-wrapper span{
-    font-size:small;
+
+.grid-audio-wrapper span ,.post-link span{
+    font-size: small;
 }
-.music-icon{
-    color:green;
+
+.music-icon {
+    color: green;
 }
-.grid-audio-wrapper img{
+
+.grid-audio-wrapper img {
     width: 85px;
     height: 85px;
-    float:left;
+    float: left;
     margin-right: 10px;
 }
+
 .post-images {
     margin-top: 15px;
     width: 300px;
 }
+
+.link-image {
+    width: 50px;
+    height: 50px;
+    float: left;
+}
+
 
 .post-music {
     margin-top: 15px;

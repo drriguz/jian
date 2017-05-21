@@ -10,7 +10,6 @@ const Promise = require('bluebird');
 const Post = require('../models/post');
 const dir_prefix = 'postpic/';
 const uuid = require('uuid/v4');
-const md5 = require('md5');
 
 class Spider {
     constructor($, from) {
@@ -34,16 +33,15 @@ class Spider {
         });
     }
 
-    static async downloadImage(url, postTime, ext) {
+    static async downloadImage(url, postTime, fileName) {
         if (!url) {
             logger.error('Unknown url:', postTime);
             return null;
         }
         let arr = url.split('/');
-        let extension = ext || '.jpg';
-        let fileName = arr[arr.length - 2] + '-' + arr[arr.length - 1] + extension;
-        if (extension === '.mp4') {
-            fileName = md5(fileName) + '.mp4';
+        if (!fileName) {
+            let extension = '.jpg';
+            fileName = arr[arr.length - 2] + '-' + arr[arr.length - 1] + extension;
         }
         let dir = dir_prefix + moment(postTime).format('YYYY/MM/DD/');
         let savePath = path.join(__dirname, '../public', dir + fileName);
@@ -51,7 +49,7 @@ class Spider {
         fsExtra.ensureDirSync(saveDir);
         let relPath = dir + fileName;
         if (fs.existsSync(savePath)) {
-            logger.debug('Skip download:', fileName);
+            logger.debug('Skip download:', fileName, savePath);
             return relPath;
         }
         logger.debug('downloading image from ', url);
