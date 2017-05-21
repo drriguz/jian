@@ -4,7 +4,7 @@ mixin talk(post)
         div.medium-8.small-centered.columns.post-wrapper
             div.post-header
                 strong 红尘の人
-            div.panel.post-content!= post.content
+            div.panel.post-content!= post.content.replace(/\n/g, '<br/>')
 
             if post.video
                 if post.msgType == 15

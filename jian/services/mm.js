@@ -5,6 +5,7 @@ const Post = require('../models/post');
 const request = require('request-promise');
 const cheerio = require('cheerio');
 const parseString = require('xml2js').parseString;
+const xmldoc = require('xmldoc');
 
 const Spider = require('./spider').Spider;
 
@@ -12,7 +13,7 @@ const querySql = 'select SnsInfo.*, SnsInfoXml.content as contentXml from SnsInf
     'left join SnsInfoXml on SnsInfo.stringSeq = SnsInfoXml.stringSeq ' +
     'where SnsInfo.type=? order by createTime desc ' +
     'limit ?';
-const limit = 1; // just for debug purpose
+const limit = 1000; // just for debug purpose
 class MmService {
     constructor(dbPath, msgType) {
         this.dbPath = dbPath;
@@ -30,37 +31,41 @@ class MmService {
                     logger.error(err);
                     return;
                 }
-
-                logger.debug('=>', row.snsId);
-                let item = new SnsMessage(row.type, row.head, row.createTime, row.content, row.sourceType, row.localFlag);
-                try {
-                    let msg = item.parse();
-                    let post = this.makePost(row.snsId, msg);
-                    this.savePost(post, msg)
-                        .then(result => {
-                            logger.debug('saved:', result._id);
-                        })
-                        .catch(err => {
-                            logger.error(err);
-                        });
-                }
-                catch (err) {
-                    logger.error('Failed to parse:', row.stringSeq, row.content.toString('hex'));
-                    logger.error(err);
-                }
+                this.parseContent(row)
+                    .then(post => {
+                        console.log(post);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    });
             });
         });
         logger.debug('Closing sqlite');
         db.close();
     }
 
-    async parseContent(row){
-
-        let contentJson = await parseString(row.contentXml);
-        console.log(contentJson);
+    async parseContent(row) {
+        let doc = new xmldoc.XmlDocument(row.contentXml);
+        console.log(doc.valueWithPath("createTime"));
+        let post = {
+            content: doc.valueWithPath("contentDesc"),
+            when: doc.valueWithPath("createTime"),
+            source: {
+                client: 'Wechat',
+                user: doc.valueWithPath("username"),
+                id: doc.valueWithPath("id"),
+                url: 'snsId:' + doc.valueWithPath("id"),
+                from: 'Wechat',
+            },
+            msgType: doc.valueWithPath("ContentObject.contentStyle"),
+            images: [],
+            video: null,
+        };
+        let saved = await this.savePost(post);
+        return saved;
     }
-    async savePost(post, msg) {
-        post = await this.normalizePost(post, msg);
+
+    async savePost(post) {
         let localImages = [];
         let postTime = new Date(post.when * 1000);
         if (post.images) {
@@ -71,44 +76,8 @@ class MmService {
             }
         }
         post.images = localImages;
-        if (post.video) {
-            post.video = await this.extractVideo(post.video, postTime);
-        }
         let item = new Post(post);
         return item.save();
-    }
-
-    async fetchLinkTitle(url) {
-        let $ = await Spider.fetch(url);
-        return $('title').text();
-    }
-
-    async normalizePost(post, msg) {
-        if (post.msgType === 5 || post.msgType === 4 || post.msgType === 3) {
-            let linkTitle = await this.fetchLinkTitle(msg.link);
-            if (!linkTitle || linkTitle === '')
-                linkTitle = 'Link';
-            post.content += '<br/><a href="' + msg.link + '" alt="link">' + linkTitle + '</a>';
-        }
-        return post;
-    }
-
-    makePost(snsId, msg) {
-        let post = {
-            content: msg.txt,
-            when: msg.when,
-            source: {
-                client: 'Wechat',
-                user: msg.wxId,
-                id: msg.stringSeq,
-                url: 'snsId:' + snsId,
-                from: 'Wechat',
-            },
-            msgType: msg.type,
-            images: msg.images,
-            video: msg.video,
-        };
-        return post;
     }
 
     async extractImage(src, thumb, postTime) {
@@ -118,15 +87,6 @@ class MmService {
             thumb: localThumb,
             src: localSrc,
         };
-    }
-
-    async extractVideo(link, postTime) {
-        if (link.indexOf('(') >= 0) {
-            link = link.split('(')[0];
-        }
-        logger.debug('video:', link);
-        let localMp4 = await Spider.downloadImage(link, postTime, '.mp4');
-        return localMp4;
     }
 }
 

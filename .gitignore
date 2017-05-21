@@ -2,5 +2,7 @@ node_modules
 .idea
 *.log
 *.out
+*bak*.tar.gz
+*.bak
 .DS_Store
 jian/public/postpic
