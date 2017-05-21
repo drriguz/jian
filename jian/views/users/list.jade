@@ -5,46 +5,48 @@ block header
 block js
     script(src='/libs/jqGrid-#{jqGrid}/js/i18n/grid.locale-en.js')
     script(src='/libs/jqGrid-#{jqGrid}/js/jquery.jqGrid.min.js')
-    script(src='/js/grid.js')
+    script(src='/js/utils.js')
+    script(src='/js/events.js')
     script.
-        function init() {
-                let cols = [
-                    {label: 'Name', name: 'name', width: 50},
-                    {label: 'Email', name: 'email', width: 50},
-                    {label: 'Account Status', name: 'status', width: 50},
-                    {label: 'Remark ', name: 'remark', width: 50},
-                    {label: 'Last Login At', name: 'lastLoginDate', width: 50},
-                    {label: 'Created At', name: 'registeredDate', width: 50}
-                ];
-            initGrid('/users/list', cols);
-        }
         $(function () {
             $("#jqGrid").jqGrid({
                 url: '/users/list',
+                styleUI: "Bootstrap",
                 mtype: "GET",
                 datatype: "json",
                 page: 1,
-                colNames: ['Name', 'Email', 'Account Status', 'Last Login', 'Created At'],
+                colNames: ['ID', 'Name', 'Email', 'Status', 'Last Login', 'Created At'],
                 colModel: [
-                    {name: 'name', key: true, width: 75},
+                    {name: '_id', key: true, width: 200},
+                    {name: 'name', width: 80},
                     {name: 'email', width: 150},
-                    {name: 'status', width: 150},
-                    {name: 'lastLoginDate', width: 150},
-                    {name: 'registeredDate', width: 150}
+                    {name: 'status', width: 50},
+                    {name: 'lastLoginDate', width: 100},
+                    {name: 'registeredDate', width: 100}
                 ],
-                height: 250,
-                rowNum: 20,
+                height: 400,
+                rowNum: 10,
+                autowidth: true,
+                shrinkToFit: true,
                 pager: "#jqGridPager"
             });
         });
 block css
-    link(rel='stylesheet', href='/libs/jqGrid-#{jqGrid}/css/ui.jqgrid.css')
     link(rel='stylesheet', href='/libs/jqGrid-#{jqGrid}/css/ui.jqgrid-bootstrap.css')
-    link(rel='stylesheet', href='/libs/jqGrid-#{jqGrid}/css/ui.jqgrid-bootstrap-ui.css')
+    link(rel='stylesheet', href='/css/override.css')
 block content
     div.row: .col-xs-12
         div.box
-            div.box-header: h3.box-title Admin users
+            form.search-form.form-inline(role='form')
+                div.form-group
+                    input.form-control(type='text', name='key', placeholder='Name or Email')
+                div.form-group
+                    select.form-control(name='status', placeholder='Status')
+                        option(value='')= 'All state'
+                        option(value='normal')= 'Normal'
+                        option(value='locked')= 'Locked'
+                div.form-group
+                    button.btn.btn-success.search-button(type='button')= 'Search'
             div.box-body
                 table#jqGrid
                 div#jqGridPager

@@ -3,24 +3,20 @@ const router = express.Router();
 
 const mongoose = require('mongoose');
 const User = require('../../models/user');
-const userService = require('../../services/users');
+const UserService = require('../../services/users');
+
+const userService = new UserService();
 
 router.get('/', function (req, res, next) {
-    userService.getUsers()
-        .then(users => {
-            return res.render('users/list', {title: 'User list', users: users});
-        })
+    return res.render('users/list', {title: 'User list'});
 });
 
 router.get('/list', (req, res) => {
-    User.find().exec().then(users => {
-        let result = {
-            page:1,
-            total: users.length,
-            records:users.length,
-            rows: users
-        };
-        return res.json(result);
+    let page = parseInt(req.query.page) || 1;
+    let rows = parseInt(req.query.rows) || 20;
+    userService.getUsersPage(page, rows, req.query.key, req.query.status)
+        .then(users => {
+        return res.json(users);
     });
 });
 
@@ -30,7 +26,7 @@ router.get('/add', (req, res) => {
 
 router.post('/doAdd', (req, res, next) => {
     let body = req.body;
-    userService.createUser(body.name, body.email, body.password, body.remark)
+    userService.create(body.name, body.email, body.password, body.remark)
         .then(user => {
             return res.send(user);
         })
