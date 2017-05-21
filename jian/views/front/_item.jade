@@ -5,14 +5,18 @@ mixin talk(post)
             div.post-header
                 strong 红尘の人
             div.panel.post-content!= post.content
+
             if post.video
-                div.post-video
-                    a(href=post.video) <small>[视频]</small>
+                if post.msgType == 15
+                    video(src=post.video, controls='controls')
+                else
+                    div.post-video
+                        a(href=post.video, style='color:blue') Video
             if post.images
                 div.post-media
                     each img in post.images
                         div.grid-picture-wrapper.float-left
                             a(href=img.src, data-lity='')
-                                img.grid-image(src=img.thumb, style='width:100%;height:100%;')
+                                img.grid-image(src=img.thumb)
             div.post-time-info
                 small!= post.displayTime + ' <small>' + post.source.client + '</small>'

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const url = 'mongodb://localhost/jian-db';
+const url = 'mongodb://localhost/jian-mmdb';
 const logger = require('log4js').getLogger('db');
 
 mongoose.Promise = require('bluebird');

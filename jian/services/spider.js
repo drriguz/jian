@@ -9,6 +9,8 @@ const Promise = require('bluebird');
 
 const Post = require('../models/post');
 const dir_prefix = 'postpic/';
+const uuid = require('uuid/v4');
+const md5 = require('md5');
 
 class Spider {
     constructor($, from) {
@@ -32,13 +34,17 @@ class Spider {
         });
     }
 
-    static async downloadImage(url, postTime) {
+    static async downloadImage(url, postTime, ext) {
         if (!url) {
             logger.error('Unknown url:', postTime);
             return null;
         }
         let arr = url.split('/');
-        let fileName = arr[arr.length - 2] + '-' + arr[arr.length - 1] + '.jpg';
+        let extension = ext || '.jpg';
+        let fileName = arr[arr.length - 2] + '-' + arr[arr.length - 1] + extension;
+        if (extension === '.mp4') {
+            fileName = md5(fileName) + '.mp4';
+        }
         let dir = dir_prefix + moment(postTime).format('YYYY/MM/DD/');
         let savePath = path.join(__dirname, '../public', dir + fileName);
         let saveDir = path.join(__dirname, '../public', dir);
@@ -91,7 +97,7 @@ class TecentSpider extends Spider {
 
         let msgCnt = msgBox.find('.msgCnt');
         let contentIcons = msgCnt.find('img');
-        for(let i = 0; i < contentIcons.length; i++){
+        for (let i = 0; i < contentIcons.length; i++) {
             let icon = contentIcons.get(i);
             let $ = this.$;
             $(icon).attr('src', $(icon).attr('crs'));
@@ -221,4 +227,5 @@ function importFromTecent(url, page, min, max) {
 }
 exports = module.exports = {
     importFromTecent: importFromTecent,
+    Spider: Spider,
 };

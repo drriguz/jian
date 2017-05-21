@@ -17,6 +17,7 @@ const postSchema = new Schema({
         url: String,
         user: String,
     },
+    msgType: Number,
     video: String,
 });
 

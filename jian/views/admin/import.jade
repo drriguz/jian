@@ -2,11 +2,21 @@ extends ../layout/admin-lte
 
 block content
     div.row: div.col-md-10
-        form.form-inline(role='form', method='post', action='/admin/import.action')
+        form.form(role='form', method='post', action='/admin/import.action')
             div.form-group
-                label(for='url') URL
-                input.form-control(name='url', type='text', value='http://t.qq.com/solever?gall=1')
-                input.form-control(name='min', type='number', value='1')
-                input.form-control(name='max', type='number', value='2')
+                label(for='url') Tecent Weibo URL
+                input.form-control(id='url', name='url', type='text', value='http://t.qq.com/solever?gall=1')
+                label(for='min') Min page
+                input.form-control(id='min', name='min', type='number', value='1')
+                label(for='max') Max page
+                input.form-control(id='max', name='max', type='number', value='2')
+                button.btn.btn-default(type='submit') Submit
+    div.row: div.col-md-10
+        form.form(role='form', method='post', action='/admin/importMm.action')
+            div.form-group
+                label(for='path') Weixin DB path
+                input.form-control(id='path', name='path', type='text', value='/Users/hfli/workspace/tmp/SnsMicroMsg.db')
+                label(for='type') Msg type
+                input.form-control(id='type', name='type', type='number', value='1')
                 button.btn.btn-default(type='submit') Submit
 

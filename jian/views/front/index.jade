@@ -11,7 +11,7 @@ block content
     div.row
         div.medium-8.small-centered.columns
             div.panel
-                h2= '简 ' + pagination.total
+                h2: a(href='/')!= '简 ' + pagination.total
     include _item
     each item in posts
         +talk(item)

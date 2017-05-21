@@ -30,7 +30,7 @@ class SnsMessage extends Message {
             let url = Message.decodeUtf8(this.readFlag(image.position, image.length));
             let thumbUrl = Message.decodeUtf8(this.readFlag(thumb.position, thumb.length));
             this.images.push({
-                image: url,
+                src: url,
                 thumb: thumbUrl,
             });
             this.lastIndex = thumb.position + thumb.length;
@@ -105,8 +105,6 @@ class SnsMessage extends Message {
             linkMask: this.linkMask || '',
             type: this.type,
             flag: '',
-            raw: this.buffer.toString('hex'),
-            abstract: this.buffer.toString(),
         };
     }
 }
