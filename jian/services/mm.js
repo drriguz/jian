@@ -48,9 +48,9 @@ class MmService {
     static mapMimeType(msgType) {
         if (msgType == 1)
             return 'image/jpeg';
-        if(msgType == 4)
+        if (msgType == 4)
             return 'audio/mpeg';
-        if(msgType == 5)
+        if (msgType == 5)
             return 'video/mpeg';
         return 'unknown';
     }
@@ -99,27 +99,27 @@ class MmService {
 
     async savePost(post) {
         let postTime = new Date(post.when * 1000);
-        if (post.msgType === 1) {
-            let localImages = [];
-            if (post.medias) {
-                for (let i = 0; i < post.medias.length; i++) {
-                    let img = post.medias[i];
-                    let localImage = await this.extractImage(img, postTime);
-                    localImages.push(localImage);
-                }
+        let localMedias = [];
+        if (post.medias) {
+            for (let i = 0; i < post.medias.length; i++) {
+                let img = post.medias[i];
+                let localMedia = await this.extractMedia(img, postTime);
+                localMedias.push(localMedia);
             }
-            post.medias = localImages;
+            post.medias = localMedias;
         }
         let item = new Post(post);
         return item.save();
     }
 
-    async extractImage(img, postTime) {
-        let localSrc = await Spider.downloadImage(img.src, postTime);
-        let localThumb = await Spider.downloadImage(img.thumb, postTime);
-        return _.merge(img, {
+    async extractMedia(media, postTime) {
+        if (media.mimeType === 'image/jpeg') {
+            let localSrc = await Spider.downloadImage(media.src, postTime);
+            media = _.merge(media, {src: localSrc});
+        }
+        let localThumb = await Spider.downloadImage(media.thumb, postTime);
+        return _.merge(media, {
             thumb: localThumb,
-            src: localSrc,
         });
     }
 }
