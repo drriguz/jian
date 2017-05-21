@@ -1,13 +1,28 @@
-.grid-picture-wrapper {
+.grid-picture-wrapper{
     width: 85px;
     height: 85px;
     margin-right: 5px;
     margin-bottom: 5px;
 }
-
-.post-media {
+.grid-audio-wrapper span{
+    font-size:small;
+}
+.music-icon{
+    color:green;
+}
+.grid-audio-wrapper img{
+    width: 85px;
+    height: 85px;
+    float:left;
+    margin-right: 10px;
+}
+.post-images {
     margin-top: 15px;
     width: 300px;
+}
+
+.post-music {
+    margin-top: 15px;
 }
 
 .grid-image {

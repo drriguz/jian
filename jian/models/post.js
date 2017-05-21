@@ -14,6 +14,8 @@ const postSchema = new Schema({
             mimeType: String,
             srcRefer: String,
             thumbRefer: String,
+            title: String,
+            description: String,
         }
     ],
     source: {
@@ -24,7 +26,6 @@ const postSchema = new Schema({
         user: String,
     },
     msgType: Number,
-    video: String,
 });
 
 module.exports = mongoose.model('Post', postSchema);

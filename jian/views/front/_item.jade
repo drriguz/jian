@@ -12,11 +12,24 @@ mixin talk(post)
                 else
                     div.post-video
                         a(href=post.video, style='color:blue') Video
-            if post.medias
-                div.post-media
+            if post.medias && post.msgType == 1
+                div.post-images
                     each media in post.medias
-                        div.grid-picture-wrapper.float-left
-                            a(href=media.src, data-lity='')
-                                img.grid-image(src=media.thumb)
+                        if media.mimeType == 'image/jpeg'
+                            div.grid-picture-wrapper.float-left
+                                a(href=media.src, data-lity='')
+                                    img.grid-image(src=media.thumb)
+            if post.medias && post.msgType == 4
+                div.post-music
+                    each media in post.medias
+                        if media.mimeType == 'audio/mpeg'
+                            audio(controls='controls')
+                                source(src=media.src, type='audio/mpeg')
+                            div.grid-audio-wrapper
+                                i.fa.fa-music.music-icon
+                                a(href=media.src, data-lity='')
+                                    img.grid-image(src=media.thumb)
+                                span!= media.title
+                                span!= ' ' + media.description
             div.post-time-info
                 small!= post.displayTime + ' <small>' + post.source.client + '</small>'

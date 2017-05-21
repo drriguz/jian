@@ -45,23 +45,35 @@ class MmService {
         db.close();
     }
 
+    static mapMimeType(msgType) {
+        if (msgType == 1)
+            return 'image/jpeg';
+        if(msgType == 4)
+            return 'audio/mpeg';
+        if(msgType == 5)
+            return 'video/mpeg';
+        return 'unknown';
+    }
+
     async parseContent(row) {
         let doc = new xmldoc.XmlDocument(row.contentXml);
         console.log(doc.toString());
         let contentObject = doc.descendantWithPath("ContentObject.mediaList");
+        let type = doc.valueWithPath("ContentObject.contentStyle");
         let images = [];
         if (contentObject) {
             contentObject.eachChild(media => {
-                //console.log('media:', media.toString());
                 let image = {
                     src: media.valueWithPath("url"),
                     thumb: media.valueWithPath("thumb"),
                     width: media.valueWithPath("size@width"),
                     height: media.valueWithPath("size@height"),
                     size: media.valueWithPath("size@totalSize"),
-                    mimeType: 'image/jpeg',
+                    mimeType: MmService.mapMimeType(type),
                     srcRefer: media.valueWithPath("url"),
                     thumbRefer: media.valueWithPath("thumb"),
+                    title: media.valueWithPath("title") || '',
+                    description: media.valueWithPath("description") || '',
                 };
                 images.push(image);
             });
@@ -76,7 +88,7 @@ class MmService {
                 url: 'snsId:' + doc.valueWithPath("id"),
                 from: 'Wechat',
             },
-            msgType: doc.valueWithPath("ContentObject.contentStyle"),
+            msgType: type,
             medias: images,
             video: null,
         };
@@ -86,16 +98,18 @@ class MmService {
     }
 
     async savePost(post) {
-        let localImages = [];
         let postTime = new Date(post.when * 1000);
-        if (post.medias) {
-            for (let i = 0; i < post.medias.length; i++) {
-                let img = post.medias[i];
-                let localImage = await this.extractImage(img, postTime);
-                localImages.push(localImage);
+        if (post.msgType === 1) {
+            let localImages = [];
+            if (post.medias) {
+                for (let i = 0; i < post.medias.length; i++) {
+                    let img = post.medias[i];
+                    let localImage = await this.extractImage(img, postTime);
+                    localImages.push(localImage);
+                }
             }
+            post.medias = localImages;
         }
-        post.medias = localImages;
         let item = new Post(post);
         return item.save();
     }
