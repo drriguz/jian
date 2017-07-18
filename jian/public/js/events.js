@@ -8,12 +8,12 @@ function searchGrid(searchForm, grid) {
     }).trigger("reloadGrid");
 }
 
-function bindDefaultEvents(){
-    $('.search-button').click(function(){
+function bindDefaultEvents() {
+    $('.search-button').click(function () {
         searchGrid('form.search-form', '#jqGrid');
     });
 }
 
-$(function(){
+$(function () {
     bindDefaultEvents();
 });

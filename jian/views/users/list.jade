@@ -9,6 +9,9 @@ block js
     script(src='/js/events.js')
     script.
         $(function () {
+            function idFormatter(cellValue, options, rowObject){
+                return '<a href="#">查看</a> <a href="#">编辑</a> <a href="#">删除</a>';
+            }
             $("#jqGrid").jqGrid({
                 url: '/users/list',
                 styleUI: "Bootstrap",
@@ -17,7 +20,7 @@ block js
                 page: 1,
                 colNames: ['ID', 'Name', 'Email', 'Status', 'Last Login', 'Created At'],
                 colModel: [
-                    {name: '_id', key: true, width: 200},
+                    {name: '_id', key: true, width: 200, formatter:idFormatter},
                     {name: 'name', width: 80},
                     {name: 'email', width: 150},
                     {name: 'status', width: 50},
@@ -28,7 +31,8 @@ block js
                 rowNum: 10,
                 autowidth: true,
                 shrinkToFit: true,
-                pager: "#jqGridPager"
+                pager: "#jqGridPager",
+                rownumbers: true
             });
         });
 block css

@@ -15,13 +15,17 @@ router.get('/about', (req, res) => {
 router.get('/import', (req, res) => {
     res.render('admin/import', {title: 'Import from Tecent Weibo'});
 });
-
+const block = true;
 router.post('/import.action', (req, res) => {
+    if(block)
+        return res.send("Don't do it!");
     let body = req.body;
     importService.importFromTecent(body.url, 1, parseInt(body.min) || 1, parseInt(body.max) || 100);
     return res.send('Request handled:Importing from Tecent Weibo');
 });
 router.post('/importMm.action', (req, res) => {
+    if(block)
+        return res.send("Don't do it!");
     let body = req.body;
     let mmServices = new MmService(body.path, body.type);
     mmServices.extractPosts();
