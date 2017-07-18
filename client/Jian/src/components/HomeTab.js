@@ -10,6 +10,7 @@ import {
 import PostItem from './PostItem';
 import {tabStyles, flexStyles} from '../styles';
 import Icon from 'react-native-vector-icons/Ionicons';
+import PostItemListContainer from '../containers/PostItemListContainer';
 
 class SearchBox extends Component {
     render () {
@@ -29,22 +30,12 @@ class SearchBox extends Component {
         );
     }
 }
-class PostsWrapper extends Component {
-    render () {
-        return (
-            <ScrollView style={[styles.postWrapper]}>
-                <PostItem content="早睡早起~"/>
-                <PostItem content="早睡早起~"/>
-            </ScrollView>
-        );
-    }
-}
 export default class HomeTab extends Component {
     render () {
         return (
             <View style={flexStyles.flex}>
                 <SearchBox/>
-                <PostsWrapper/>
+                <PostItemListContainer/>
             </View>
         );
     }
