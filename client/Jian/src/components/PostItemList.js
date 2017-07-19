@@ -29,11 +29,16 @@ export default class PostItemList extends Component {
 
     onRefresh = () => {
         console.log("refresh....", this.props.query);
-        this.props.refreshPosts();
+        this.props.fetchPosts(
+            this.props.query.search,
+            null);
     };
 
     loadMore = () => {
         console.log("More...");
+        this.props.fetchPosts(
+            this.props.query.search,
+            this.props.query.last);
     };
 
 
@@ -55,7 +60,7 @@ export default class PostItemList extends Component {
             >
                 {content}
                 <TouchableOpacity onPress={this.loadMore}>
-                    <Text style={styles.loadButton}>Load more >>{this.props.postList.search}</Text>
+                    <Text style={styles.loadButton}>Load more >></Text>
                 </TouchableOpacity>
             </ScrollView>
         );

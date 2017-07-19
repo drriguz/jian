@@ -5,15 +5,15 @@ import {
 } from '../actions/post';
 
 const mapStateToProps = (state) => {
-    return {};
+    return { query: state.posts.query };
 };
 import {doFetchPost} from './PostItemListContainer';
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onSearch: (keyword) => {
-            dispatch(setFetchArgumentsActionCreator(keyword));
-            doFetchPost(dispatch, keyword);
+        onSearch: (keyword, limit) => {
+            //dispatch(setFetchArgumentsActionCreator(keyword));
+            doFetchPost(dispatch, keyword, null, limit);
         }
     };
 };

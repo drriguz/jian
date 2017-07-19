@@ -1,4 +1,5 @@
 import {ACTIONS} from '../actions/post';
+const R = require('ramda');
 
 const initial_state = {
     query: {
@@ -14,46 +15,39 @@ const initial_state = {
 };
 
 export default PostReducer = (state = initial_state, action) => {
+    let newState;
     switch (action.type) {
         case ACTIONS.FETCH_POSTS:
-            return {
+            newState = {
                 ...state,
+                query: action.payload.query,
             };
+            if (!action.payload.query.last)
+                newState.postList.rows = [];
+            return newState;
         case ACTIONS.FETCH_POSTS_SUCCESS:
-            console.log('success-->', action);
-            return {
+            let rows = action.payload;
+            newState = {
                 ...state,
                 postList: {
-                    rows: action.payload,
-                    error: null,
-                    loading: false
+                    ...initial_state.postList,
+                    rows: R.concat(state.postList.rows)(rows),
                 }
             };
+            if (rows.length > 0) {
+                let lastItem = rows[rows.length - 1];
+                newState.query.last = lastItem._id;
+            }
+            console.log("=>", newState);
+            return newState;
         case ACTIONS.FETCH_POSTS_FAILURE:
             return {
                 ...state,
                 postList: {
-                    rows: [],
+                    ...initial_state.postList,
                     error: 'Failed to fetch posts',
-                    loading: false
                 }
             };
-        case ACTIONS.REFRESH_POSTS:
-            return {
-                ...state,
-                ...initial_state,
-            };
-        case ACTIONS.SET_FETCH_ARGS:
-            let newState = {
-                ...state,
-                query: {
-                    last: action.payload.last || state.query.last,
-                    search: action.payload.search || state.query.search,
-                    pageSize: state.query.pageSize,
-                }
-            };
-            console.log("new state", state, newState);
-            return newState;
         default:
             return state;
     }

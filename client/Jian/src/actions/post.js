@@ -5,12 +5,11 @@ export const ACTIONS = {
     FETCH_POSTS: 'FETCH_POSTS',
     FETCH_POSTS_SUCCESS: 'FETCH_POSTS_SUCCESS',
     FETCH_POSTS_FAILURE: 'FETCH_POSTS_FAILURE',
-    REFRESH_POSTS: 'REFRESH_POSTS',
-    SET_FETCH_ARGS: 'SET_FETCH_ARGS',
 };
 
-export const fetchPostsActionCreator = (search, last) => {
-    let url = API_FETCH_URL + "?rows=1";
+export const fetchPostsActionCreator = (search, last, limit) => {
+    let pageSize = limit || 5;
+    let url = API_FETCH_URL + `?rows=${pageSize}`;
     if (search)
         url += `&search=${search}`;
     if (last)
@@ -21,10 +20,16 @@ export const fetchPostsActionCreator = (search, last) => {
         url: url,
         headers: []
     });
-
     return {
         type: ACTIONS.FETCH_POSTS,
-        payload: request
+        payload: {
+            request: request,
+            query: {
+                search: search,
+                last: last,
+                pageSize: limit,
+            }
+        }
     }
 };
 
@@ -39,22 +44,5 @@ export const fetchPostsFailureActionCreator = (error) => {
     return {
         type: ACTIONS.FETCH_POSTS_FAILURE,
         payload: error
-    }
-};
-
-export const refreshPostsActionCreator = () => {
-    return {
-        type: ACTIONS.REFRESH_POSTS,
-        payload: {}
-    }
-};
-
-export const setFetchArgumentsActionCreator = (search, last) => {
-    return {
-        type: ACTIONS.SET_FETCH_ARGS,
-        payload: {
-            search: search,
-            last: last
-        }
     }
 };
