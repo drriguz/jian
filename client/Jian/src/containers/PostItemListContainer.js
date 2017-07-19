@@ -1,26 +1,39 @@
 import {connect} from 'react-redux';
-import {fetchPosts, fetchPostsFailure, fetchPostsSuccess} from '../actions/post';
+import {
+    fetchPostsActionCreator,
+    fetchPostsFailureActionCreator,
+    fetchPostsSuccessActionCreator,
+    refreshPostsActionCreator
+} from '../actions/post';
 import PostItemList from '../components/PostItemList';
 
 const mapStateToProps = (state) => {
     return {
-        postList: state.posts.postList
+        refreshing: state.posts.refreshing,
+        postList: state.posts.postList,
+        query: state.posts.query,
     };
+};
+export const doFetchPost = (dispatch, search, last) => {
+    console.log("->fetching...");
+    dispatch(fetchPostsActionCreator(search, last))
+        .then((response) => {
+            console.log('res:', response);
+            if (response.error)
+                return dispatch(fetchPostsFailureActionCreator(response.payload.data));
+            return dispatch(fetchPostsSuccessActionCreator(response.payload.data));
+        })
+        .catch(err => {
+            console.error(err);
+        });
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchPosts: () => {
-            dispatch(fetchPosts())
-                .then((response) => {
-                    console.log('res:', response);
-                    if (response.error)
-                        return dispatch(fetchPostsFailure(response.payload.data));
-                    return dispatch(fetchPostsSuccess(response.payload.data.rows));
-                })
-                .catch(err => {
-                    console.error(err);
-                });
+        fetchPosts: (search, last) => doFetchPost(dispatch, search, last),
+        refreshPosts: () => {
+            dispatch(refreshPostsActionCreator());
+            doFetchPost(dispatch);
         }
     }
 };

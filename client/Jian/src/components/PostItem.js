@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import {tabStyles, flexStyles} from '../styles';
+import {API_BASE} from '../constants';
 
 class PostItemHeader extends Component {
     render () {
@@ -28,26 +29,26 @@ class PostItemHeader extends Component {
 }
 
 class PostItemContent extends Component {
+    renderLink (key, thumb, link) {
+        return <Image key={key} style={[styles.thumb]} source={{ uri: `${API_BASE}/${thumb}`}}/>;
+    }
+
+    renderMedias (medias) {
+        return medias.map(media => {
+            if (media.mimeType.indexOf("html") > -1)
+                return this.renderLink(media._id, media.thumb, media.srcRefer);
+            if (media.mimeType.indexOf("image") > -1)
+                return <Image key={media._id} style={[styles.thumb]} source={{ uri: `${API_BASE}/${media.thumb}` }}/>;
+            return <Image key={media._id} style={[styles.thumb]} source={require("../assets/default.png")}/>;
+        });
+    }
+
     render () {
         return (
             <View style={styles.contentWrapper}>
                 <Text>{this.props.content}</Text>
                 <View style={styles.mediaWrapper}>
-                    <Image
-                        style={[styles.thumb]}
-                        source={{ uri: "http://127.0.0.1:8080/1.jpeg" }}/>
-                    <Image
-                        style={[styles.thumb]}
-                        source={{ uri: "http://127.0.0.1:8080/1.jpeg" }}/>
-                    <Image
-                        style={[styles.thumb]}
-                        source={{ uri: "http://127.0.0.1:8080/1.jpeg" }}/>
-                    <Image
-                        style={[styles.thumb]}
-                        source={{ uri: "http://127.0.0.1:8080/1.jpeg" }}/>
-                    <Image
-                        style={[styles.thumb]}
-                        source={{ uri: "http://127.0.0.1:8080/1.jpeg" }}/>
+                    {this.renderMedias(this.props.medias)}
                 </View>
             </View>
         );
@@ -61,8 +62,10 @@ export default class PostItem extends Component {
                     author="红尘の人"
                     time="昨天 21:28"
                     bio="写诗的程序员..."
-                    avatar="http://127.0.0.1:8080/riguz.jpeg"/>
-                <PostItemContent content={this.props.content}/>
+                    avatar="http://127.0.0.1:3000/images/avatar5.png"/>
+                <PostItemContent
+                    content={this.props.content}
+                    medias={this.props.medias}/>
             </View>
         );
     }

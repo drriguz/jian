@@ -1,25 +1,23 @@
 import {ACTIONS} from '../actions/post';
 
 const initial_state = {
+    query: {
+        search: "",
+        last: null,
+        pageSize: 1,
+    },
     postList: {
         rows: [],
         error: null,
-        loading: false
+        loading: false,
     }
 };
 
 export default PostReducer = (state = initial_state, action) => {
-    let error;
-
     switch (action.type) {
         case ACTIONS.FETCH_POSTS:
             return {
                 ...state,
-                postList: {
-                    rows: [],
-                    error: null,
-                    loading: true
-                }
             };
         case ACTIONS.FETCH_POSTS_SUCCESS:
             console.log('success-->', action);
@@ -40,6 +38,22 @@ export default PostReducer = (state = initial_state, action) => {
                     loading: false
                 }
             };
+        case ACTIONS.REFRESH_POSTS:
+            return {
+                ...state,
+                ...initial_state,
+            };
+        case ACTIONS.SET_FETCH_ARGS:
+            let newState = {
+                ...state,
+                query: {
+                    last: action.payload.last || state.query.last,
+                    search: action.payload.search || state.query.search,
+                    pageSize: state.query.pageSize,
+                }
+            };
+            console.log("new state", state, newState);
+            return newState;
         default:
             return state;
     }

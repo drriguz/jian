@@ -8,3 +8,4 @@ node_modules
 backup
 .DS_Store
 jian/public/postpic
+build
