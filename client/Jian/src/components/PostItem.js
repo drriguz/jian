@@ -3,10 +3,9 @@ import {
     StyleSheet,
     Text,
     View,
-    ScrollView,
-    TextInput,
     TouchableOpacity,
-    Image
+    Image,
+    WebView
 } from 'react-native';
 
 import {tabStyles, flexStyles} from '../styles';
@@ -30,18 +29,56 @@ class PostItemHeader extends Component {
 }
 
 class PostItemContent extends Component {
-    _renderLink (key, thumb, title, link) {
+    componentWillMount () {
+        this.state = { preview: false };
+    }
+
+    _openLinkInWebView = (title, link, video, poster) => {
         const { navigate } = this.props.navigation;
+        navigate('Browser', { url: link, title: title, video: video, poster: poster });
+    };
+
+    _openImageLightBox = (src) => {
+        const { navigate } = this.props.navigation;
+        navigate('LightBox', { url: `${API_BASE}/${src}` });
+    };
+
+    _renderLink = (key, thumb, title, link) => {
         return (
             <View key={key} style={styles.imageLinkWrapper}>
-                <Image
-                    style={[styles.linkThumb]}
-                    source={{ uri: `${API_BASE}/${thumb}` }}/>
-                <TouchableOpacity onPress={
-                    () => navigate('Browser', { url: link, title: title })
-                }>
+                <TouchableOpacity onPress={() => this._openLinkInWebView(title, link)}>
+                    <Image
+                        style={[styles.linkThumb]}
+                        source={{ uri: `${API_BASE}/${thumb}` }}/>
                     <Text style={[styles.linkText, flexStyles.flex]}>{title}</Text>
                 </TouchableOpacity>
+            </View>
+        );
+    };
+
+    _renderImage (key, thumb, src) {
+        return (
+            <TouchableOpacity key={key} onPress={() => this._openImageLightBox(src)}>
+                <Image style={[styles.thumb]} source={{ uri: `${API_BASE}/${thumb}` }}/>
+            </TouchableOpacity>
+        );
+    }
+
+    _renderVideo (key, poster, title, videoUrl) {
+        const thumb = `${API_BASE}/${poster}`;
+        const source = `${API_BASE}/${videoUrl}`;
+        const embeddedVideo = {
+            html: `<video style="width:100px;height:100px;background-size: cover;" controls="controls" poster="${thumb}"><source src="${source}" type="video/mpeg"></video>`
+        };
+        /*
+        <TouchableOpacity key={key} onPress={() => this._openLinkInWebView(title, null, source, thumb)}>
+
+            <Image style={[styles.thumb]} source={{ uri: thumb }}/>
+        </TouchableOpacity>
+        */
+        return (
+            <View key={key} style={{ width: 100, height: 100, flex: 1 }}>
+                <WebView source={embeddedVideo}/>
             </View>
         );
     }
@@ -51,8 +88,14 @@ class PostItemContent extends Component {
             if (media.mimeType.indexOf("html") > -1)
                 return this._renderLink(media._id, media.thumb, media.title, media.src);
             if (media.mimeType.indexOf("image") > -1)
-                return <Image key={media._id} style={[styles.thumb]} source={{ uri: `${API_BASE}/${media.thumb}` }}/>;
-            return <Image key={media._id} style={[styles.thumb]} source={require("../assets/default.png")}/>;
+                return this._renderImage(media._id, media.thumb, media.src);
+            if (media.mimeType.indexOf("video") > -1)
+                return this._renderVideo(media._id, media.thumb, 'Video', media.src);
+            return (
+                <TouchableOpacity key={media._id}>
+                    <Image style={[styles.thumb]} source={require("../assets/default.png")}/>
+                </TouchableOpacity>
+            );
         });
     }
 
@@ -67,6 +110,7 @@ class PostItemContent extends Component {
         );
     }
 }
+
 export default class PostItem extends Component {
     render () {
         return (

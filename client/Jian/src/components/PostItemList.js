@@ -76,6 +76,7 @@ export default class PostItemList extends Component {
 }
 const styles = StyleSheet.create({
     loadButton: {
+        marginTop: 10,
         borderWidth: 1,
         borderColor: "#eee",
         color: "#5bb4ee",

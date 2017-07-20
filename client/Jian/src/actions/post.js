@@ -14,7 +14,6 @@ export const fetchPostsActionCreator = (search, last, limit) => {
         url += `&search=${search}`;
     if (last)
         url += `&last=${last}`;
-    console.log("fetch url:", url);
     const request = axios({
         method: 'get',
         url: url,

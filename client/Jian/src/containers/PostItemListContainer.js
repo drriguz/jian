@@ -14,10 +14,8 @@ const mapStateToProps = (state) => {
     };
 };
 export const doFetchPost = (dispatch, search, last) => {
-    console.log("->fetching...");
     let fetchAction = dispatch(fetchPostsActionCreator(search, last));
     fetchAction.payload.request.then((response) => {
-        console.log('res:', response);
         if (response.error)
             return dispatch(fetchPostsFailureActionCreator(response.data));
         return dispatch(fetchPostsSuccessActionCreator(response.data));

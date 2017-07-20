@@ -10,6 +10,7 @@ import HomeTab from './src/components/HomeTab';
 import NewsTab from './src/components/NewsTab';
 import ProfileTab from './src/components/ProfileTab';
 import BrowserPage from './src/components/BrowserPage';
+import ImageLightbox from './src/components/ImageLightbox';
 
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import FacebookTabBar from './src/components/FacebookTabBar';
@@ -28,8 +29,7 @@ import {StackNavigator, TabNavigator} from 'react-navigation';
 export default class Jian extends Component {
     static navigationOptions = {
         title: 'Jian',
-        headerStyle: {
-        }
+        headerStyle: {}
     };
 
     render () {
@@ -38,7 +38,7 @@ export default class Jian extends Component {
                 <ScrollableTabView
                     initialPage={0}
                     tabBarPosition="bottom"
-                    renderTabBar={() => <FacebookTabBar />}>
+                    renderTabBar={() => <FacebookTabBar/>}>
                     <View tabLabel={{ icon: "ios-aperture", name: "Home" }} style={tabStyles.tabView}>
                         <HomeTab {...this.props}/>
                     </View>
@@ -58,6 +58,7 @@ const AppNavigator = StackNavigator(
     {
         Home: { screen: Jian },
         Browser: { screen: BrowserPage },
+        LightBox: { screen: ImageLightbox },
     },
     {
         initialRouteName: 'Home',

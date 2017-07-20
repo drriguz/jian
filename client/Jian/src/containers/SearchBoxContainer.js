@@ -12,7 +12,6 @@ import {doFetchPost} from './PostItemListContainer';
 const mapDispatchToProps = (dispatch) => {
     return {
         onSearch: (keyword, limit) => {
-            //dispatch(setFetchArgumentsActionCreator(keyword));
             doFetchPost(dispatch, keyword, null, limit);
         }
     };
