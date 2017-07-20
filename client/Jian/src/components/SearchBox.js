@@ -13,7 +13,7 @@ export default class SearchBox extends Component {
         this.state = { search: "" };
     }
 
-    onSearch = () => {
+    _onSearch = () => {
         console.log('searching...');
         this.props.onSearch(this.state.search);
     };
@@ -29,7 +29,7 @@ export default class SearchBox extends Component {
                         onChangeText={(val) => this.setState({ search: val })}
                     />
                 </View>
-                <TouchableOpacity style={styles.searchButton} onPress={this.onSearch}>
+                <TouchableOpacity style={styles.searchButton} onPress={this._onSearch}>
                     <Icon
                         name="ios-search"
                         size={30}
@@ -44,14 +44,12 @@ export default class SearchBox extends Component {
 const styles = StyleSheet.create({
     searchWrapper: {
         flexDirection: "row",
-        marginTop: 5,
         height: 35,
         borderWidth: 1,
         borderColor: '#eee',
     },
     searchInput: {
         flex: 1,
-
         justifyContent: "center",
     },
     searchButton: {

@@ -15,11 +15,12 @@ export default class PostItemList extends Component {
         this.props.fetchPosts();
     }
 
-    renderRows (rows) {
+    _renderRows (rows) {
         if (!rows)
             return <Text>No content</Text>;
         return rows.map(post => {
             return <PostItem
+                {...this.props}
                 key={post._id}
                 author="红尘の人"
                 content={post.content}
@@ -27,20 +28,29 @@ export default class PostItemList extends Component {
         })
     }
 
-    onRefresh = () => {
+    _onRefresh = () => {
         console.log("refresh....", this.props.query);
         this.props.fetchPosts(
             this.props.query.search,
             null);
     };
 
-    loadMore = () => {
+    _loadMore = () => {
         console.log("More...");
         this.props.fetchPosts(
             this.props.query.search,
             this.props.query.last);
     };
 
+    _renderNextButton (hasMore) {
+        if (hasMore)
+            return (
+                <TouchableOpacity onPress={this._loadMore}>
+                    <Text style={styles.loadButton}>Load more >></Text>
+                </TouchableOpacity>
+            );
+        return <Text style={styles.loadButton}>No more data</Text>;
+    }
 
     render () {
         let { rows, loading, error } = this.props.postList;
@@ -48,20 +58,18 @@ export default class PostItemList extends Component {
         if (error)
             content = <Text>Error...</Text>;
         else
-            content = this.renderRows(rows);
+            content = this._renderRows(rows);
         return (
             <ScrollView
                 refreshControl={
                     <RefreshControl
                         refreshing={loading}
-                        onRefresh={this.onRefresh}
+                        onRefresh={this._onRefresh}
                         title="Loading..."
                     />}
             >
                 {content}
-                <TouchableOpacity onPress={this.loadMore}>
-                    <Text style={styles.loadButton}>Load more >></Text>
-                </TouchableOpacity>
+                {this._renderNextButton(true)}
             </ScrollView>
         );
     }

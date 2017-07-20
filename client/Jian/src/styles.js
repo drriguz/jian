@@ -8,7 +8,7 @@ export const tabStyles = StyleSheet.create({
     card: {
         borderWidth: 1,
         backgroundColor: '#fff',
-        borderColor: 'rgba(0,0,0,0.1)',
+        borderColor: '#444',
         margin: 5,
         height: 150,
         padding: 15,
