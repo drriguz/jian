@@ -1,20 +1,22 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    Image,
+    TouchableOpacity
 } from 'react-native';
 
-const Lightbox = require('react-native-lightbox');
+import Image from 'react-native-image-progress';
 
 export default class ImageLightBox extends Component {
     render () {
         return (
-            <Lightbox navigator={this.props.navigator}>
+            <TouchableOpacity style={{ flex: 1, alignContent: "center", justifyContent: "center" }} onPress={() => {
+                this.props.navigation.goBack();
+            }}>
                 <Image
                     style={{ height: 300 }}
                     source={{ uri: this.props.navigation.state.params.url }}
                 />
-            </Lightbox>
+            </TouchableOpacity>
         );
     }
 }
